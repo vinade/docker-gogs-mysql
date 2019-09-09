@@ -3,7 +3,7 @@
 GOGS_HOST="${GOGS_HTTP_DOMAIN}:${GOGS_HOST_PORT}"
 
 curl --insecure -i -X POST \
- --url "https://${GOGS_HOST}/install" \
+ --url "http://${GOGS_HOST}/install" \
  -H "Host: ${GOGS_HOST}" \
  -H "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:54.0) Gecko/20100101 Firefox/54.0" \
  -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
@@ -25,13 +25,9 @@ curl --insecure -i -X POST \
  --data "domain=${GOGS_HTTP_DOMAIN}" \
  --data "ssh_port=${GOGS_SSH_PORT}" \
  --data "http_port=3000" \
- --data "app_url=https://${HOST}" \
+ --data "app_url=http://${HOST}" \
  --data "log_root_path=/app/gogs/log" \
  --data "use_builtin_ssh_server=${GOGS_BUILTIN_SSH_SERVER}" \
- --data "smtp_host=${GOGS_SMTP_HOST}" \
- --data "smtp_from=${GOGS_SMTP_FROM}" \
- --data "smtp_user=${GOGS_SMTP_USER}" \
- --data "smtp_passwd=${GOGS_SMTP_PASSWD}" \
  --data "enable_federated_avatar=on" \
  --data "enable_captcha=on" \
  --data "enable_console_mode=${GOGS_ENABLE_CONSOLE_MODE}" \

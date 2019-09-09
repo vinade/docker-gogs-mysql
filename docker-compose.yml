@@ -1,35 +1,59 @@
 version: '3.3'
 services:
-    gogsdb:
-      image: mysql:${MYSQL_VERSION}
-      container_name: ${MYSQL_HOST}
-      restart: always
-      env_file:
-          - .env
-      environment:
-          - MYSQL_DATABASE=${MYSQL_DATABASE}
-          - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-          - MYSQL_USER=${MYSQL_USER}
-          - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      ports:
-          - 13306:3306
-      volumes:
-          - db-data:/var/lib/mysql
-    gogsapp:
-      image: gogs/gogs
-      restart: always
-      ports:
-        - ${GOGS_SSH_PORT}:22
-        - ${GOGS_HOST_PORT}:3000
-      environment:
-        - RUN_CROND=true
-      volumes:
-        - gogs-data:/data
-      depends_on:
-        - gogsdb
+
+  canopus_gogs_db:
+    image: mysql:${MYSQL_VERSION}
+    container_name: ${MYSQL_HOST}
+    restart: always
+    env_file:
+        - .env
+    environment:
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+        - 13306:3306
+    volumes:
+        - db-data:/var/lib/mysql
+    networks:
+      main:
+
+  canopus_gogs_app:
+    image: gogs/gogs
+    restart: always
+    ports:
+      - ${GOGS_SSH_PORT}:22
+      - ${GOGS_HOST_PORT}:3000
+    environment:
+      - RUN_CROND=true
+    volumes:
+      - gogs-data:/data
+    depends_on:
+      - canopus_gogs_db
+    networks:
+      main:
+
+  canopus_jenkins:
+    build: ./jenkins/
+    restart: always
+    container_name: jenkins
+    ports:
+        - "9092:8080"
+    volumes:
+        - /var/jenkins_home:/var/jenkins_home
+        - /var/run/docker.sock:/var/run/docker.sock
+
+    depends_on:
+      - canopus_gogs_app
+    networks:
+      main:
 
 volumes:
   gogs-data:
     driver: local
   db-data:
     driver: local
+
+networks:
+  main:
